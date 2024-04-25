@@ -11,6 +11,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  CardContent,
+  Grid,
 } from "@mui/material";
 import axios from "axios";
 import { message } from "antd";
@@ -26,6 +28,8 @@ const Expenses = () => {
   const records = users.slice(firstIndex, lastIndex);
   const npage = Math.ceil(users.length / recordsPerPage);
   const numbers = [...Array(npage + 1).keys()].slice(1);
+
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -46,15 +50,18 @@ const Expenses = () => {
 
   const fetchCategories = async () => {
     try {
+      setLoading(true);
       const { data: categories } = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/api/category/all-categories`
       );
       if (categories) {
         console.log("CATS : ", categories);
         setCategories(categories);
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -84,9 +91,11 @@ const Expenses = () => {
         if (expense) {
           // console.log("EXPENSE : ", expense);
           setUsers(expense.expense);
+          // setLoading(false);
         }
       } catch (error) {
         console.log(error);
+        // setLoading(false);
       }
     }
   };
@@ -107,6 +116,27 @@ const Expenses = () => {
     };
     fetchExpense();
   }, []);
+
+  if (loading) {
+    return (
+      <Box sx={{ mx: 3, mt: 20 }}>
+        <Box>
+          <SideNav/>
+        </Box>
+        <Card>
+          <CardContent>
+            <Grid
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Typography>Loading....</Typography>
+            </Grid>
+          </CardContent>
+        </Card>
+      </Box>
+    );
+  }
 
   return (
     <Box
