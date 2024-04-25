@@ -6,7 +6,7 @@ const userRoute = require("./routes/userRoute");
 const EMIRoute = require("./routes/EMIRoute");
 const authRoute = require("./routes/authRoute");
 const categoryRoute = require("./routes/categoryRoute");
-const fs = require("fs")
+const fs = require("fs");
 const https = require("https");
 const expenseRoute = require("./routes/expenseRoute");
 const cronJob = require("./cronJob");
@@ -29,7 +29,7 @@ app.use("/api/category", categoryRoute);
 app.use("/api/expense", expenseRoute);
 
 app.get("/", (req, res) => {
-  res.send("Hello from server");
+  res.send("Hello from Walsawangikarurban");
 });
 
 const PORT = 8182;
