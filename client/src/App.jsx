@@ -13,6 +13,7 @@ import Report from "./pages/Report";
 import CustomerList from "./pages/CustomerList";
 import SingleCustomer from "./pages/SingleCustomer";
 import Expenses from "./pages/Expenses";
+import Addexpense from "./pages/Addexpense";
 
 function App() {
   const location = useLocation();
@@ -86,6 +87,14 @@ function App() {
           element={
             <IsLogin>
               <Expenses />
+            </IsLogin>
+          }
+        />
+        <Route
+          path="/add-expense"
+          element={
+            <IsLogin>
+              <Addexpense />
             </IsLogin>
           }
         />

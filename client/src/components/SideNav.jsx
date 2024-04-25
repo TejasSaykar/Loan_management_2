@@ -234,7 +234,7 @@ export default function SideNav() {
                 <GroupAddIcon />
               </ListItemIcon>
               <ListItemText
-                primary={"Customer Instalments"}
+                primary={"Customer Installments"}
                 sx={{ opacity: open ? 1 : 0 }}
               />
             </ListItemButton>

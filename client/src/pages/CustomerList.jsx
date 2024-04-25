@@ -33,13 +33,6 @@ const CustomerList = () => {
   const npage = Math.ceil(users.length / recordsPerPage);
   const numbers = [...Array(npage + 1).keys()].slice(1);
 
-  let total;
-  if (tab === "expense") {
-    total = users
-      .map((item) => item.amount)
-      .reduce((accu, val) => accu + val, 0);
-  }
-
   const prePage = () => {
     if (currentPage !== 1) {
       setCurrentPage(currentPage - 1);
@@ -53,72 +46,6 @@ const CustomerList = () => {
   };
 
   const [loading, setLoading] = useState(false);
-
-  const fetchCategories = async () => {
-    try {
-      const { data: categories } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/category/all-categories`
-      );
-      if (categories) {
-        // console.log("CATS : ", categories);
-        setcategories(categories);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, [tab === "expense"]);
-
-  const handleChange = async (e) => {
-    setTab(e.target.value);
-    let type = e.target.value;
-    if (type === "users") {
-      try {
-        setLoading(true);
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/api/user/all-users`
-        );
-        if (data) {
-          // console.log("Users : ", users);
-          setUsers(data.users);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      try {
-        const { data: expenses } = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/api/expense/get-expenses`
-        );
-        if (expenses) {
-          // console.log("EXPENSES : ", expenses.expenses);
-          setUsers(expenses.expenses);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-
-  const handleCatChange = async (e) => {
-    const slug = e.target.value.toLowerCase();
-    console.log("SLUG : ", slug)
-    try {
-      const { data: expense } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/api/category/find-cat/${slug}`
-      );
-      if (expense) {
-        // console.log("EXPENSE : ", expense);
-        setUsers(expense.expense);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const fetchUser = async () => {
     try {
@@ -171,13 +98,12 @@ const CustomerList = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <TableContainer component={Paper}>
           <Grid>
-            <div className="flex items-center ml-3 pt-5">
+            {/* <div className="flex items-center ml-3 pt-5">
               <label htmlFor="">Sort By : </label>
               <select
                 className="py-2 px-4 ml-3 ring-1 rounded-md focus:ring-gray-500 cursor-pointer focus:outline-none ring-gray-300"
                 onChange={handleChange}
               >
-                {/* <option value={"users"}>-Select-</option> */}
                 <option className="cursor-pointer" value={"users"}>
                   Customers
                 </option>
@@ -185,23 +111,7 @@ const CustomerList = () => {
                   Expenses
                 </option>
               </select>
-              {tab === "expense" && (
-                <select
-                  className="py-2 px-4 ml-3 ring-1 rounded-md focus:ring-gray-500 cursor-pointer focus:outline-none ring-gray-300"
-                  onChange={handleCatChange}
-                >
-                  {/* <option value={"users"}>-Select-</option> */}
-                  <option className="cursor-pointer" value={"users"}>
-                    -Select-
-                  </option>
-                  {categories?.categories?.map((cat) => (
-                    <option className="cursor-pointer" value={cat.title}>
-                      {cat.title}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
+            </div> */}
             <Grid display="flex" justifyContent={"center"} sx={{ my: 2 }}>
               <Typography variant="h4" color={"gray"}>
                 {tab === "users" ? "Customers List" : "Expenses"}
@@ -386,105 +296,6 @@ const CustomerList = () => {
             </form>
           )}
 
-          {tab === "expense" && (
-            <form>
-              <Box
-                display={"flex"}
-                justifyContent={"space-between"}
-                px={2}
-              ></Box>
-              <Table
-                sx={{ width: 100 + "%", overflowX: "scroll" }}
-                aria-label="customized table"
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: "bold" }} align="left">
-                      Title
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: "bold" }} align="left">
-                      Description
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: "bold" }} align="left">
-                      Amount
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignContent: "center",
-                      width: "100%",
-                      margin: "auto",
-                      justifyContent: "center",
-                      padding: "5px 0px",
-                    }}
-                  >
-                    {records.length === 0 && <h2>Expense Not Found</h2>}
-                  </div>
-
-                  {records &&
-                    records.map((expense, index) => (
-                      <TableRow key={expense._id}>
-                        <TableCell align="left">
-                          {expense?.title?.title}
-                        </TableCell>
-                        <TableCell align="left">
-                          {expense.description}
-                        </TableCell>
-                        <TableCell align="left">{expense.amount}</TableCell>
-                        {/* <TableCell align="left">Total : {"2300"}</TableCell> */}
-                      </TableRow>
-                    ))}
-                  <div className="w-[176%] mt-5 flex justify-end">
-                    <h2>
-                      <span className="font-thin text-gray-600">Total :</span>
-                      <span className="text-sm font-semibold ml-1">
-                        {total}
-                      </span>
-                    </h2>
-                  </div>
-                  <div className="flex gap-3 items-center my-2 mx-3">
-                    <Box>
-                      <Button
-                        disabled={firstIndex === 0}
-                        variant={"contained"}
-                        onClick={prePage}
-                      >
-                        Prev
-                      </Button>
-                    </Box>
-                    <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                      {numbers.map((item) => (
-                        <Typography
-                          sx={
-                            currentPage === item && {
-                              backgroundColor: "skyblue",
-                              color: "white",
-                              px: 2,
-                              py: 1,
-                            }
-                          }
-                        >
-                          {item}
-                        </Typography>
-                      ))}
-                    </Box>
-                    <Box>
-                      <Button
-                        // disabled={lastIndex === npage }
-                        variant={"contained"}
-                        onClick={nextPage}
-                      >
-                        Next
-                      </Button>
-                    </Box>
-                  </div>
-                </TableBody>
-              </Table>
-            </form>
-          )}
         </TableContainer>
       </Box>
     </Box>

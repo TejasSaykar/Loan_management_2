@@ -608,11 +608,11 @@ const UserRegistration = () => {
                           id="standard-basic"
                           type="text"
                           min="0"
-                          value={inputs.nameOfApplicant}
+                          value={inputs.nameOfOtherApplicants}
                           onChange={(e) =>
                             setInputs({
                               ...inputs,
-                              nameOfApplicant: e.target.value,
+                              nameOfOtherApplicants: e.target.value,
                             })
                           }
                           label="Name of other Applicants"
