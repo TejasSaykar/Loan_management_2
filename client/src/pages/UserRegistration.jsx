@@ -124,7 +124,7 @@ const UserRegistration = () => {
       );
       if (data) {
         // console.log(data);
-        // navigate("/users");
+        navigate("/users");
         message.success("Registration Successfully");
       }
     } catch (error) {
