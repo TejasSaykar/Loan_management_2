@@ -28,12 +28,16 @@ const UserRegistration = () => {
     rmCodeAndName: "",
     applicationDate: "",
     loanAmountNumber: "",
+    emiAmount: null,
+    totalEmi: null,
+    lastEmiDate: "",
     loanAmountWord: "",
     loanProduct: "",
     loanTensure: "",
     addressOfProperty: "",
     extentOfLand: "",
     affordableEmi: "",
+    penalty: "",
     extentInSqft: "",
     village: "",
     district: "",
@@ -107,17 +111,20 @@ const UserRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(!moment(inputs.applicationDate).format("YYYY-MM-DD")){
+      return alert("Invalid Date")
+    }
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/user/user-registration`,
         {
           ...inputs,
-          applicationDate: moment(inputs.applicationDate).format("YYYY-MM-DD"),
+          applicationDate: moment(inputs.applicationDate).format("DD-MM-YYYY"),
         }
       );
       if (data) {
         // console.log(data);
-        navigate("/users");
+        // navigate("/users");
         message.success("Registration Successfully");
       }
     } catch (error) {
@@ -267,7 +274,7 @@ const UserRegistration = () => {
                       <Grid item sm={12} lg={12}>
                         <TextField
                           id="standard-basic"
-                          type="text"
+                          type="date"
                           value={inputs.applicationDate}
                           required
                           onChange={(e) =>
@@ -309,7 +316,7 @@ const UserRegistration = () => {
                             })
                           }
                         />
-                      </Grid> 
+                      </Grid>
                       <Grid item sm={12} lg={6}>
                         <TextField
                           type="text"
@@ -327,6 +334,65 @@ const UserRegistration = () => {
                           }
                         />
                       </Grid>
+                    </Grid>
+
+                    <Grid
+                      container
+                      spacing={2}
+                      sx={{ flexGrow: 1, marginBottom: "10px" }}
+                    >
+                      <Grid item sm={12} lg={6}>
+                        <TextField
+                          type="number"
+                          variant="outlined"
+                          value={inputs.emiAmount}
+                          label="EMI Amount"
+                          placeholder="EMI Amount"
+                          sx={{ width: 100 + "%" }}
+                          required
+                          onChange={(e) =>
+                            setInputs({
+                              ...inputs,
+                              emiAmount: e.target.value,
+                            })
+                          }
+                        />
+                      </Grid>
+                      <Grid item sm={12} lg={6}>
+                        <TextField
+                          type="number"
+                          variant="outlined"
+                          value={inputs.totalEmi}
+                          required
+                          label="Total EMI"
+                          placeholder="Total EMI"
+                          sx={{ width: 100 + "%", mb: 2 }}
+                          onChange={(e) =>
+                            setInputs({
+                              ...inputs,
+                              totalEmi: e.target.value,
+                            })
+                          }
+                        />
+                      </Grid>
+                    </Grid>
+
+                    <Grid item sm={12} lg={6}>
+                      <TextField
+                        type="text"
+                        variant="outlined"
+                        value={inputs.lastEmiDate}
+                        required
+                        label="Last EMI Date"
+                        placeholder="DD-MM-YYYY"
+                        sx={{ width: 100 + "%", mb: 2 }}
+                        onChange={(e) =>
+                          setInputs({
+                            ...inputs,
+                            lastEmiDate: e.target.value,
+                          })
+                        }
+                      />
                     </Grid>
 
                     <Grid
@@ -438,19 +504,36 @@ const UserRegistration = () => {
                         <TextField
                           required
                           id="standard-basic"
-                          type="text"
-                          value={inputs.extentInSqft}
+                          type="number"
+                          value={inputs.penalty}
                           onChange={(e) =>
                             setInputs({
                               ...inputs,
-                              extentInSqft: e.target.value,
+                              penalty: e.target.value,
                             })
                           }
-                          label="Extent of build in Sqft"
+                          label="Penalty Amount"
                           variant="outlined"
                           sx={{ width: 100 + "%" }}
                         />
                       </Grid>
+                    </Grid>
+                    <Grid my={1} item sm={12} lg={12}>
+                      <TextField
+                        required
+                        id="standard-basic"
+                        type="text"
+                        value={inputs.extentInSqft}
+                        onChange={(e) =>
+                          setInputs({
+                            ...inputs,
+                            extentInSqft: e.target.value,
+                          })
+                        }
+                        label="Extent of build in Sqft"
+                        variant="outlined"
+                        sx={{ width: 100 + "%" }}
+                      />
                     </Grid>
 
                     <Grid
@@ -639,11 +722,11 @@ const UserRegistration = () => {
                       </Grid> */}
                     </Grid>
 
-                      <Box>
-                        <div className="text-center font-semibold my-5 text-lg text-gray-600">
-                          <h2>APPLICANT SECTION</h2>
-                        </div>
-                      </Box>
+                    <Box>
+                      <div className="text-center font-semibold my-5 text-lg text-gray-600">
+                        <h2>APPLICANT SECTION</h2>
+                      </div>
+                    </Box>
 
                     <Grid
                       container

@@ -17,9 +17,10 @@ import {
   Modal,
 } from "@mui/material";
 import SideNav from "../components/SideNav";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, json, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { CiCircleCheck } from "react-icons/ci";
 import { Card, message } from "antd";
 import moment from "moment";
 
@@ -39,13 +40,26 @@ const TodaysEMi = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [singleUser, setSingleUser] = useState();
+  const [updatedRow, setUpdatedRow] = useState([]);
+
+  console.log("updateRow : ", updatedRow);
+
+  console.log("Single User : ", singleUser?.user?.emiAmount);
 
   // let date = singleUser?.user?.applicationDate;
-  const [newDate, setNewDate] = useState(
-    moment(singleUser?.user?.applicationDate)
-  );
+  const [newDate, setNewDate] = useState("");
 
-  console.log("NEW DATE : ", singleUser?.user?.applicationDate);
+  const handleUpdateRow = (newarray) => {
+    setUpdatedRow(newarray);
+    localStorage.setItem("currentRowId", JSON.stringify(newarray));
+  };
+
+  useEffect(() => {
+    const storedArray = localStorage.getItem("currentRowId");
+    if (storedArray) {
+      setUpdatedRow(JSON.parse(storedArray));
+    }
+  }, []);
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -80,31 +94,25 @@ const TodaysEMi = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   const handleUpdate = async (id) => {
-    // e.preventDefault();
-    if (newDate === singleUser?.user?.applicationDate) {
-      handleClose();
-      return message.error("Already Updated");
-    }
     try {
       const { data } = await axios.put(
         `${import.meta.env.VITE_BASE_URL}/api/user/update-user/${id}`,
-        {
-          createdAt: newDate,
-        }
+        { totalEmiAmountRecieved: singleUser?.user?.emiAmount }
       );
       if (data) {
         message.success("Customer Updated Successfully");
         handleClose();
+        fetchUsers();
       }
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   if (loading) {
     return (
@@ -185,7 +193,14 @@ const TodaysEMi = () => {
 
                 {users?.user &&
                   users?.user?.map((user, index) => (
-                    <TableRow key={user._id}>
+                    <TableRow
+                      key={user._id}
+                      style={{
+                        backgroundColor: updatedRow.includes(user._id)
+                          ? "lightgreen"
+                          : "white",
+                      }}
+                    >
                       <TableCell component="th" scope="row">
                         {index + 1}
                       </TableCell>
@@ -211,9 +226,13 @@ const TodaysEMi = () => {
                               color="success"
                               onClick={() => {
                                 fetchSingleUser(user._id);
+                                handleUpdateRow([...updatedRow, user._id]);
                               }}
                             >
                               Paid
+                              <h2>
+                                {user?.todayEmi === true && <CiCircleCheck />}
+                              </h2>
                             </Button>
                           </Link>
                           <Link to={`/edit-user/${user._id}`}>

@@ -23,6 +23,24 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    todayEmi: {
+      type: Boolean,
+      default: false,
+    },
+    emiPayments: {
+      type: [
+        {
+          month: {
+            type: String,
+            required: true,
+          },
+          paid: {
+            type: Boolean,
+            default: false,
+          },
+        },
+      ],
+    },
     loanAmountNumber: {
       type: Number,
       required: true,
@@ -30,6 +48,35 @@ const userSchema = new mongoose.Schema(
     loanAmountWord: {
       type: String,
       required: true,
+    },
+    emiAmount: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    totalEmi: {
+      type: Number,
+      required: true,
+    },
+    lastEmiDate: {
+      type: String,
+      required: true,
+    },
+    monthDue: {
+      type: String,
+      required: true,
+    },
+    totalEmiRecievedCount: {
+      type: Number,
+      default: 0,
+    },
+    totalEmiAmountRecieved: {
+      type: Number,
+      default: 0,
+    },
+    totalEmiBountCount: {
+      type: Number,
+      default: 0,
     },
     loanProduct: {
       type: String,
@@ -51,6 +98,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    penalty: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
     extentInSqft: {
       type: String,
     },
@@ -66,8 +118,8 @@ const userSchema = new mongoose.Schema(
     approxMarketValue: {
       type: String,
     },
-    serveNo:{
-      type: String
+    serveNo: {
+      type: String,
     },
     propertyOwner: {
       type: String,
@@ -210,5 +262,13 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.pre("save", function (next) {
+  const currentDate = new Date().toISOString().substring(0, 10);
+
+  this.emiPayments.push({ month: currentDate, paid: false });
+
+  next();
+});
 
 module.exports = mongoose.model("user", userSchema);

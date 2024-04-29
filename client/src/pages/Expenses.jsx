@@ -30,6 +30,7 @@ const Expenses = () => {
   const numbers = [...Array(npage + 1).keys()].slice(1);
 
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
 
   const navigate = useNavigate();
 
@@ -73,18 +74,22 @@ const Expenses = () => {
     const slug = e.target.value.toLowerCase();
     if (slug === "all") {
       try {
+        // setLoading1(true);
         const { data: expense } = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/api/expense/get-expenses`
         );
         if (expense) {
           // console.log("EXPENSE : ", expense.expenses);
           setUsers(expense.expenses);
+          // setLoading1(false);
         }
       } catch (error) {
         console.log(error);
+        // setLoading1(false);
       }
     } else {
       try {
+        // setLoading(true);
         const { data: expense } = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/api/category/find-cat/${slug}`
         );
@@ -121,7 +126,27 @@ const Expenses = () => {
     return (
       <Box sx={{ mx: 3, mt: 20 }}>
         <Box>
-          <SideNav/>
+          <SideNav />
+        </Box>
+        <Card>
+          <CardContent>
+            <Grid
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Typography>Loading....</Typography>
+            </Grid>
+          </CardContent>
+        </Card>
+      </Box>
+    );
+  }
+  if (loading1) {
+    return (
+      <Box sx={{ mx: 3, mt: 20 }}>
+        <Box>
+          <SideNav />
         </Box>
         <Card>
           <CardContent>

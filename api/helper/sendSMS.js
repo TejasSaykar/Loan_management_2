@@ -25,24 +25,25 @@
 
 // sendSMS("Hello from Tejas Saykar");
 
-
-const twilio = require("twilio")
+const twilio = require("twilio");
 
 // Your Twilio Account SID and Auth Token
 const accountSid = "AC472166f1490388776b610f09a60430c4";
-const authToken = "92a1e97dabd3af4d0547d9d28cfad63e";
+const authToken = "04403556680cb998786302b9a5025427";
 
 // Initialize Twilio client
 const client = twilio(accountSid, authToken);
 
 // Sending SMS message
-client.messages
-  .create({
-    body: "This is a test message sent from Tejas Saykar",
-    from: "+12057934229", // Your Twilio phone number
-    to: "+919284834571", // Recipient's phone number
-  })
-  .then((message) =>
-    console.log("Message sent successfully. SID:", message.sid)
-  )
-  .catch((error) => console.error("Error sending message:", error));
+// exports.sendMSG = () => {
+  // client.messages
+  //   .create({
+  //     body: "Your Registration is successfull for Loan Application.",
+  //     from: "+12057934229", // Your Twilio phone number
+  //     to: "+917620307622", // Recipient's phone number
+  //   })
+  //   .then((message) =>
+  //     console.log("Message sent successfully. SID:", message.sid)
+  //   )
+  //   .catch((error) => console.error("Error sending message:", error));
+// };
