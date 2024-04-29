@@ -224,7 +224,7 @@ cron.schedule("0 0 * * *", async () => {
 
 // Find users with last emi date
 
-// cron.schedule("*/5 * * * *", async () => {
+cron.schedule("0 0 * * *", async () => {
 async function getUsersByLastDate(req, res) {
   try {
     let result;
@@ -279,4 +279,4 @@ async function getUsersByLastDate(req, res) {
   }
 }
 getUsersByLastDate();
-// });
+});
