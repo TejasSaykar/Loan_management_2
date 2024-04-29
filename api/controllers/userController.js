@@ -193,7 +193,7 @@ exports.getUserByCurrentDate = async (req, res) => {
 cron.schedule("0 0 * * *", async () => {
   async function sendReminderMessage() {
     const date = moment().startOf("day").toDate();
-    const today = moment(date).format("DD-MM-YYYY").substring(0, 2);
+    const today = moment(date).format("DD-MM-YYYY");
 
     console.log("__Today__", today);
 
@@ -225,58 +225,58 @@ cron.schedule("0 0 * * *", async () => {
 // Find users with last emi date
 
 cron.schedule("0 0 * * *", async () => {
-async function getUsersByLastDate(req, res) {
-  try {
-    let result;
+  async function getUsersByLastDate(req, res) {
+    try {
+      let result;
 
-    const currentDate = moment();
-    const dueDate = moment(currentDate).add(1, "months").format("DD-MM-YYYY");
+      const currentDate = moment();
+      const dueDate = moment(currentDate).add(1, "months").format("DD-MM-YYYY");
 
-    const yesterday = moment()
-      .subtract(1, "days")
-      .startOf("day")
-      .format("DD-MM-YYYY");
+      const yesterday = moment()
+        .subtract(1, "days")
+        .startOf("day")
+        .format("DD-MM-YYYY");
 
-    // console.log("Previous day's date:", yesterday);
+      // console.log("Previous day's date:", yesterday);
 
-    const users = await userModel.find({
-      monthDue: {
-        $regex: `^${yesterday}`,
-        $options: "i",
-      },
-    });
+      const users = await userModel.find({
+        monthDue: {
+          $regex: `^${yesterday}`,
+          $options: "i",
+        },
+      });
 
-    for (let user of users) {
-      let userData = await userModel.findById({ _id: user._id });
+      for (let user of users) {
+        let userData = await userModel.findById({ _id: user._id });
 
-      if (userData) {
-        if (!userData.todayEmi) {
-          userData.totalEmiBountCount += 1;
-          userData.monthDue = dueDate;
+        if (userData) {
+          if (!userData.todayEmi) {
+            userData.totalEmiBountCount += 1;
+            userData.monthDue = dueDate;
+          }
+
+          if (userData.todayEmi) {
+            userData.todayEmi = false;
+            userData.monthDue = dueDate;
+          }
         }
 
-        if (userData.todayEmi) {
-          userData.todayEmi = false;
-          userData.monthDue = dueDate;
-        }
+        // console.log("USERDATA : ", userData);
+
+        result = await userModel.findByIdAndUpdate(
+          { _id: user._id },
+          { $set: userData },
+          { new: true }
+        );
       }
-
-      // console.log("USERDATA : ", userData);
-
-      result = await userModel.findByIdAndUpdate(
-        { _id: user._id },
-        { $set: userData },
-        { new: true }
-      );
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        success: false,
+        message: "Error while getting the users",
+        error,
+      });
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Error while getting the users",
-      error,
-    });
   }
-}
-getUsersByLastDate();
+  getUsersByLastDate();
 });
